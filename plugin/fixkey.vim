@@ -74,12 +74,14 @@ function! Fixkey_resetMetaNumbers()
 endfunction
 
 function! Fixkey_setMetaLetters()
+    let skip_p = exists("g:Fixkey_xterm_fix") && g:Fixkey_xterm_fix
     let c = 'a'
     while c <= 'z'
         let uc = toupper(c)
         call Fixkey_setKey("<M-" .  c . ">", "\e" . c)
         " Since many keycodes have "\eO" in them, we can't use "\eO" for <M-O>.
-        if uc != 'O'
+        " <M-P> breaks something in xterm, see https://github.com/drmikehenry/vim-fixkey/issues/11.
+        if uc != 'O' && (uc != 'P' || ! skip_p)
             call Fixkey_setKey("<M-" . uc . ">", "\e" . uc)
         endif
         let c = nr2char(char2nr(c) + 1)
